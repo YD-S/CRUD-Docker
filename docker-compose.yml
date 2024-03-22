@@ -1,0 +1,25 @@
+version: '3'
+services:
+  nginx:
+    image: Nginx
+    networks:
+      - app
+    ports:
+      - "4250:80"
+  backend:
+    image: Backend
+    networks:
+      - app
+  db:
+    image: postgres:latest
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=$DB_USER
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+      - POSTGRES_DB=$DB_NAME
+    networks:
+      - app
+networks:
+  app:
+    driver: bridge
