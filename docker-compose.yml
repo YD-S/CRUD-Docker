@@ -1,25 +1,38 @@
 version: '3'
 services:
-  nginx:
-    image: Nginx
-    networks:
-      - app
-    ports:
-      - "4250:80"
-  backend:
-    image: Backend
-    networks:
-      - app
   db:
-    image: postgres:latest
+      container_name: db
+      image: postgres:latest
+      env_file:
+        - .env
+      environment:
+          POSTGRES_USER: $DB_USER
+          POSTGRES_PASSWORD: $DB_PASSWORD
+          POSTGRES_DB: $DB_NAME
+      networks:
+        - app
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U $DB_USER"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+  backend:
+    container_name: backend
+    build:
+      context: Backend
+      dockerfile: Dockerfile
+    image: backend
+    networks:
+      - app
     env_file:
       - .env
     environment:
-      - POSTGRES_USER=$DB_USER
-      - POSTGRES_PASSWORD=$DB_PASSWORD
-      - POSTGRES_DB=$DB_NAME
-    networks:
-      - app
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
+      DB_NAME: $DB_NAME
+    depends_on:
+      db:
+        condition: service_healthy
 networks:
   app:
     driver: bridge

@@ -7,7 +7,12 @@ RUN apt-get update && apt-get install -y \
 # Set the working directory in the container
 RUN git clone https://github.com/YD-S/CRUD.git /app
 
-RUN cd /app
+# Copy the .env file to the container
+COPY .env /app/.env
+
+WORKDIR /app
+
+RUN git fetch --all
 
 RUN git checkout backend
 
@@ -18,4 +23,4 @@ RUN npm install
 EXPOSE 3000
 
 # Start the application
-CMD ["npm", "run" ,"start"]
+CMD ["npm", "run","start"]
