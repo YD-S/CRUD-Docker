@@ -1,7 +1,7 @@
 FROM nginx:latest
 
-ENV BACKEND_HOST=backend
-ENV BACKEND_PORT=your_backend_port
+ENV BACKEND_HOST="db"
+ENV BACKEND_PORT=3000
 
 RUN apt-get update && apt-get install -y \
 	curl git
